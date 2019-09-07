@@ -3,6 +3,7 @@
 function encodep($text) {
 	$data = utf8_encode($text);
 	$compressed = gzdeflate($data, 9);
+	echo "b64: ".base64_encode($compressed)."\n";
 	return encode64($compressed);
 }
 
@@ -44,6 +45,7 @@ function append3bytes($b1, $b2, $b3) {
 function encode64($c) {
 	$str = "";
 	$len = strlen($c);
+	echo "len: ".$len."\n";
 	for ($i = 0; $i < $len; $i+=3) {
 		if ($i+2==$len) {
 			$str .= append3bytes(ord(substr($c, $i, 1)), ord(substr($c, $i+1, 1)), 0);
@@ -57,7 +59,7 @@ function encode64($c) {
 	return $str;
 }
 
-$input = "fooobar\ntest==><\n";
+$input = "ABCDEFGHIJ";
 $output = encodep($input);
 
 echo $input." => ".$output."\n";

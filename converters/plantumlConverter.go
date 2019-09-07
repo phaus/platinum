@@ -2,12 +2,10 @@ package converters
 
 import (
 	"bufio"
-	"bytes"
-	"compress/flate"
-	"encoding/base64"
 	"fmt"
-	"io"
 	"strings"
+
+	"github.com/phaus/platinum/utils"
 )
 
 const (
@@ -40,6 +38,7 @@ func (converter *PlantumlConverter) Convert(input string) (string, error) {
 			fmt.Println("plantuml start")
 			inPlantUML = true
 			uml = ""
+			line = ""
 		}
 		if line == endMarker {
 			fmt.Println("plantuml end")
@@ -49,6 +48,7 @@ func (converter *PlantumlConverter) Convert(input string) (string, error) {
 				return "", err
 			}
 			fmt.Printf("uml:\n%s\n", encoded)
+			line = ""
 		}
 		if inPlantUML {
 			uml += line + "\n"
@@ -59,24 +59,9 @@ func (converter *PlantumlConverter) Convert(input string) (string, error) {
 		}
 	}
 	return "", nil
-	//	return "", fmt.Errorf("error converting %d bytes", len(input))
 }
 
 func compress(content string) (string, error) {
-	var b bytes.Buffer
-	const dict = `>>` + `--` + `==` + ` ` + `<<`
-	// Compress the data using the specially crafted dictionary.
-	zw, err := flate.NewWriterDict(&b, flate.BestCompression, []byte(dict))
-	if err != nil {
-		return "", err
-	}
-	if _, err := io.Copy(zw, strings.NewReader(content)); err != nil {
-		return "", err
-	}
-	if err := zw.Close(); err != nil {
-		return "", err
-	}
-
-	str := base64.URLEncoding.EncodeToString(b.Bytes())
+	str := utils.EncodeP(content)
 	return str, nil
 }

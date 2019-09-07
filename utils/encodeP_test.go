@@ -7,8 +7,8 @@ import (
 )
 
 func TestSimpleEncodeP(t *testing.T) {
-	input := "fooobar\ntest==><\n"
-	expected := "IylFpqzABE8gIIqkiRMri-420000"
+	input := "ABCDEFGHIJ"
+	expected := "StHoTd5rS_Vmz080"
 
 	output := utils.EncodeP(input)
 
