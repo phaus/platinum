@@ -2,10 +2,10 @@ package utils
 
 import (
 	"log"
-	"path"
 	"path/filepath"
 	"runtime"
 
+	"github.com/phaus/platinum/data"
 	"github.com/robertkrimen/otto"
 )
 
@@ -16,26 +16,25 @@ var (
 )
 
 func init() {
-	input, err := ReadFromFile(path.Join(basepath, "..", "converters", "rawdeflate.js"), "")
+	deflateScript, err := data.Asset("js/deflate.js")
 	if err != nil {
 		panic(err)
 	}
-	script = input
+	script = string(deflateScript)
 	script += `
 	function encode64(data) {
-		r = "";
+		o = "";
 		for (i=0; i<data.length; i+=3) {
 			 if (i+2==data.length) {
-				r += append3bytes(data.charCodeAt(i), data.charCodeAt(i+1), 0);
+				o += append3bytes(data.charCodeAt(i), data.charCodeAt(i+1), 0);
 			} else if (i+1==data.length) {
-				r += append3bytes(data.charCodeAt(i), 0, 0);
+				o += append3bytes(data.charCodeAt(i), 0, 0);
 			} else {
-				r += append3bytes(data.charCodeAt(i), data.charCodeAt(i+1),
+				o += append3bytes(data.charCodeAt(i), data.charCodeAt(i+1),
 					data.charCodeAt(i+2));
 			}
-			console.log("r:\n" + r);
 		}
-		return r;
+		return o;
 	}
 	
 	function append3bytes(b1, b2, b3) {
@@ -73,9 +72,9 @@ func init() {
 		return '?';
 	}
 	(function(){
-			console.log("encoding\n" + input + "\n")
-			s = unescape(encodeURIComponent(input));
-			return encode64(zip_deflate(s, 9))
+			s = unescape(encodeURIComponent(input))
+			encoded = encode64(zip_deflate(s, 9))
+			return encoded
 		})();
 	`
 }

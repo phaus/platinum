@@ -1,62 +1,52 @@
-	---
-	title: "Architecture"
-	date: 2019-09-01T14:47:42+02:00
-	draft: true
-	author: doublemalt
-	---
-	
-	Deployment
-	----------
-	
-	
-	```plantuml
-	@startuml
-	actor Author
-	actor Editor
-	actor Reviewer
-	
-	cloud "Ethereum Blockchain" {
-	  component "Peer Review Contract" as prc
-	  component "Journal Contract" as jc
-	  agent "Author Wallet" as aw
-	  agent "Editor Wallet" as ew
-	  agent "Reviewer Wallet" as rw
-	}
-	
-	
-	cloud "IPFS Network" {
-	  database "Smart Contract UI Code" {
-		folder "Peer Review Contract UI Code" as prc_ui
-		folder "Journal UI Code" as jc_ui
-	  }
-	  database "Review Artifacts" {
-		folder "Submitted Paper Versions" as spv
-		folder "Paper Reviews" as pr
-	  }
-	}
-	
-	Author == aw
-	aw -(0- prc
-	'Author -- prc_ui
-	Author -->> spv : uploads
-	Author <<-- pr : reads
-	
-	Editor == ew
-	ew -(0- jc
-	'Editor -- jc_ui
-	ew -(0- prc
-	'Editor -- prc_ui
-	Editor <<-- spv : reads
-	Editor <<-- pr : reads
-	
-	Reviewer == rw
-	rw -(0- prc
-	Reviewer <<-- spv : reads
-	'Reviewer -- prc_ui
-	Reviewer -->> pr : uploads
-	
-	prc -(0)- jc
-	@enduml
-	```
+# base-diagram
 
-	more text
+```plantuml
+@startuml
+Bob->Alice : hello
+Alice->Bob : Go Away
+@enduml
+```
+
+# activity-diagram
+
+```plantuml
+@startuml
+start
+if (condition A) then (yes)
+  :Text 1;
+elseif (condition B) then (yes)
+  :Text 2;
+  stop
+elseif (condition C) then (yes)
+  :Text 3;
+elseif (condition D) then (yes)
+  :Text 4;
+else (nothing)
+  :Text else;
+endif
+stop
+@enduml
+```
+
+# sequence-diagram
+
+```plantuml
+@startuml
+participant User
+
+User -> A: DoWork
+activate A #FFBBBB
+
+A -> A: Internal call
+activate A #DarkSalmon
+
+A -> B: << createRequest >>
+activate B
+
+B --> A: RequestCreated
+deactivate B
+deactivate A
+A -> User: Done
+deactivate A
+@enduml
+```
